@@ -16410,7 +16410,13 @@ $scope.setHasSeenShareWalkThrough( response2.data.value === "true" );
 });
 };
 $scope.doRequestAccess = function() {
-projectService.sendRequestPermission( config.project.id );
+var requestEmail = "";
+var requestName = "";
+if ( !config.user.isAccountAuthenticated ) {
+requestEmail = prompt("Please enter your email","bob@bob.com");
+requestName = prompt("Please enter your name","Bob Barker");
+}
+projectService.sendRequestPermission( config.project.id, $scope.screenID, requestEmail, requestName );
 };
 var renderContext = requestContext.getRenderContext( "", "screenID" );
 var percentOfScreensLoaded = 0;
@@ -25857,12 +25863,15 @@ modelEvents.trigger( "projectStakeholderRemoved", config.project.id, userID );
 config.affiliates = _.rejectWithProperty( config.affiliates, "id", userID );
 });
 }
-function sendRequestPermission( projectIDThatNeedsPermission ) {
+function sendRequestPermission( projectIDThatNeedsPermission, screenID, requestEmail, requestName ) {
 var promise = serviceHelper.executeRequest({
 resource: resource,
 name: "sendRequestPermission",
 parameters: {
-id: projectIDThatNeedsPermission
+id: projectIDThatNeedsPermission,
+screenID: screenID,
+requestEmail: requestEmail,
+requestName: requestName
 }
 });
 return( promise );
